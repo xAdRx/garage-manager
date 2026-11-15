@@ -1,0 +1,11 @@
+# Render Blueprint: one free web service built from the Dockerfile.
+# In Render: New > Blueprint, then pick this repository.
+services:
+  - type: web
+    name: garage-manager
+    runtime: docker
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /vehicles
+    autoDeploy: true

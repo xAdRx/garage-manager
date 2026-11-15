@@ -1,0 +1,5 @@
+.git
+certs/*.pem
+restapi
+frontend/node_modules
+frontend/dist
