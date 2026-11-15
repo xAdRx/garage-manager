@@ -29,8 +29,9 @@ Owner Panel for adding vehicles. See [Frontend](#frontend).
    go mod download
    ```
 
-3. Create a self-signed TLS certificate in `certs/`. The server does not
-   start without it. These files are git-ignored, so do not commit them.
+3. Optional: create a self-signed TLS certificate in `certs/` to also run the
+   API over HTTPS. Without it the API runs over HTTP only. These files are
+   git-ignored, so do not commit them.
 
    ```sh
    openssl req -x509 -newkey rsa:2048 -nodes \
@@ -61,7 +62,8 @@ API first.
    go run .
    ```
 
-   Wait for `HTTP listening on :5000` and `HTTPS listening on :5001`.
+   Wait for `HTTP listening on :5000`. With a certificate in `certs/` you also
+   see `HTTPS listening on :5001`.
 
 2. **Terminal 2, the frontend.** From the project root:
 
@@ -79,7 +81,7 @@ To stop either part, press `Ctrl+C` in its terminal.
 | Web app (garage)           | <http://localhost:5173>        |
 | Web app (Owner Panel)      | <http://localhost:5173/owner>  |
 | API over HTTP              | <http://localhost:5000>        |
-| API over HTTPS             | <https://localhost:5001>       |
+| API over HTTPS             | <https://localhost:5001> (only with a certificate) |
 | API docs (Scalar)          | <http://localhost:5000/docs>   |
 
 If the garage page says "Can't load vehicles", the API in terminal 1 is not
@@ -107,8 +109,54 @@ go build -o restapi .
 ./restapi
 ```
 
-Run the binary from the project root, because it reads the certificate from
+Run the binary from the project root, because it looks for the certificate in
 `certs/` relative to the current directory.
+
+### Run as one app with Docker
+
+This runs the API and the built frontend together in one container, the same
+way as on Render. No Node.js or Go install is needed, only Docker:
+
+```sh
+docker build -t garage-manager .
+docker run --rm -p 10000:10000 garage-manager
+```
+
+Open <http://localhost:10000>. The API docs are at <http://localhost:10000/docs>.
+
+### Settings
+
+The API reads these environment variables. All are optional.
+
+| Variable     | Default | What it does                                                         |
+|--------------|---------|----------------------------------------------------------------------|
+| `PORT`       | `5000`  | HTTP port                                                            |
+| `HTTPS_PORT` | `5001`  | HTTPS port, used only when `certs/cert.pem` and `certs/key.pem` exist |
+| `STATIC_DIR` | empty   | Folder with the built frontend (`frontend/dist`). When set, the API also serves the web app at `/` and the API under `/api` |
+
+## Deploy to Render (free)
+
+[Render](https://render.com) can host the whole program for free as one web
+service, built from the `Dockerfile`. The repository has a `render.yaml`
+Blueprint for it.
+
+1. Create a free account at <https://render.com> and connect your GitHub
+   account.
+2. Click **New** > **Blueprint** and pick the `garage-manager` repository.
+3. Confirm the `garage-manager` service from `render.yaml` and click
+   **Deploy Blueprint**.
+4. When the build finishes, open the address Render shows, e.g.
+   `https://garage-manager.onrender.com`.
+
+Render provides HTTPS itself, so the app runs over HTTP inside the container.
+Every push to `main` deploys again (`autoDeploy` in `render.yaml`).
+
+Limits of the free plan:
+
+- The service sleeps after 15 minutes without traffic. The next visit wakes it
+  up, which takes about a minute.
+- Vehicles are kept in memory, so after the service sleeps or deploys again,
+  only the 4 default vehicles are left.
 
 ## API
 
@@ -216,7 +264,8 @@ vehicles.
 
 ### How the frontend reaches the API
 
-To start the frontend, see [Run](#run). The app calls the API under `/api`. The Vite dev server forwards those requests
+To start the frontend, see [Run](#run). The app calls the API under `/api`.
+The Vite dev server forwards those requests
 to `http://localhost:5000` and removes the `/api` prefix, so the browser talks
 to one origin and the API needs no CORS setup. To use another API address, set
 `API_URL`:
@@ -235,16 +284,18 @@ Run these inside `frontend/`:
 | `npm run preview` | Serves the `dist/` build locally                 |
 | `npm run lint`    | Lints the code with oxlint                       |
 
-The `/api` forwarding exists only in the dev server. To deploy the `dist/`
-build, serve it behind a web server or proxy that forwards `/api/*` to the Go
-API in the same way.
+The `/api` forwarding exists only in the dev server. In production the Go API
+serves the `dist/` build itself and answers under `/api` (see
+[Settings](#settings) and [Deploy to Render](#deploy-to-render-free)).
 
 ## Project structure
 
 ```
 .
-├── main.go                    Entry point: ports, certificate paths, API info
-├── server/server.go           Server setup, route registration, HTTP/HTTPS listeners
+├── main.go                    Entry point: settings from environment variables, API info
+├── server/
+│   ├── server.go              Server setup, route registration, HTTP/HTTPS listeners
+│   └── static.go              Serves the built frontend (falls back to index.html)
 ├── handlers/
 │   ├── vehicles.go            GET and POST /vehicles handlers and default data
 │   ├── vehicle_request.go     POST /vehicles request body and validation
@@ -256,6 +307,8 @@ API in the same way.
 │   └── motorcycle.go          Motorcycle (embeds Vehicle)
 ├── docs/                      Generated Swagger spec (do not edit)
 ├── certs/                     Local TLS certificate and key (git-ignored)
+├── Dockerfile                 Builds one image with the API and the frontend
+├── render.yaml                Render Blueprint for the free web service
 └── frontend/                  React web app
     ├── vite.config.ts         Dev server and /api forwarding to the Go API
     └── src/
