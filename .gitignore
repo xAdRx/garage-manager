@@ -1,0 +1,5 @@
+# TLS certificates and private keys (generate locally, never commit)
+certs/*.pem
+
+# Build output
+/restapi
