@@ -1,9 +1,23 @@
 basePath: /
 definitions:
-  handlers.CarsResponse:
+  models.Car:
     properties:
-      message:
+      brand:
+        example: Volkswagen
         type: string
+      doors:
+        example: 5
+        type: integer
+      id:
+        example: 3f2b8c1e-9d4a-4e6b-8a7f-1c2d3e4f5a6b
+        format: uuid
+        type: string
+      model:
+        example: Golf
+        type: string
+      year:
+        example: 2020
+        type: integer
     type: object
 info:
   contact: {}
@@ -19,7 +33,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.CarsResponse'
+            items:
+              $ref: '#/definitions/models.Car'
+            type: array
       summary: Get cars
       tags:
       - cars

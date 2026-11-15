@@ -28,7 +28,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.CarsResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Car"
+                            }
                         }
                     }
                 }
@@ -36,11 +39,29 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "handlers.CarsResponse": {
+        "models.Car": {
             "type": "object",
             "properties": {
-                "message": {
-                    "type": "string"
+                "brand": {
+                    "type": "string",
+                    "example": "Volkswagen"
+                },
+                "doors": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "3f2b8c1e-9d4a-4e6b-8a7f-1c2d3e4f5a6b"
+                },
+                "model": {
+                    "type": "string",
+                    "example": "Golf"
+                },
+                "year": {
+                    "type": "integer",
+                    "example": 2020
                 }
             }
         }

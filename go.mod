@@ -2,7 +2,10 @@ module restapi
 
 go 1.26.8
 
-require github.com/swaggo/swag v1.16.4
+require (
+	github.com/google/uuid v1.6.0
+	github.com/swaggo/swag v1.16.4
+)
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
