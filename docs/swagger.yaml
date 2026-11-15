@@ -6,7 +6,7 @@ definitions:
         example: Skoda
         type: string
       doors:
-        description: required when type is car
+        description: optional, only when type is car
         example: 5
         type: integer
       hasSidecar:
@@ -90,8 +90,8 @@ paths:
         in: query
         name: type
         type: string
-      - description: Brand contains this text, case-insensitive (vo matches Volkswagen
-          and Volvo)
+      - description: Brand contains this text, case-insensitive (e matches Chevrolet
+          and XPeng)
         in: query
         name: brand
         type: string
@@ -130,8 +130,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: 'Adds a car or motorcycle. The server generates the id. Send doors
-        only for a car (required, 1-10). hasSidecar is for a motorcycle (optional,
+      description: 'Adds a car or motorcycle. The server generates the id. doors is
+        optional and only for a car (1-10). hasSidecar is for a motorcycle (optional,
         default false); a car accepts only hasSidecar: false, which is ignored.'
       parameters:
       - description: Vehicle to add

@@ -38,7 +38,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Brand contains this text, case-insensitive (vo matches Volkswagen and Volvo)",
+                        "description": "Brand contains this text, case-insensitive (e matches Chevrolet and XPeng)",
                         "name": "brand",
                         "in": "query"
                     },
@@ -86,7 +86,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Adds a car or motorcycle. The server generates the id. Send doors only for a car (required, 1-10). hasSidecar is for a motorcycle (optional, default false); a car accepts only hasSidecar: false, which is ignored.",
+                "description": "Adds a car or motorcycle. The server generates the id. doors is optional and only for a car (1-10). hasSidecar is for a motorcycle (optional, default false); a car accepts only hasSidecar: false, which is ignored.",
                 "consumes": [
                     "application/json"
                 ],
@@ -146,7 +146,7 @@ const docTemplate = `{
                     "example": "Skoda"
                 },
                 "doors": {
-                    "description": "required when type is car",
+                    "description": "optional, only when type is car",
                     "type": "integer",
                     "example": 5
                 },

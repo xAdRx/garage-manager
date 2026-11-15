@@ -31,9 +31,10 @@ type VehiclesHandler struct {
 func NewVehiclesHandler() *VehiclesHandler {
 	return &VehiclesHandler{
 		vehicles: []models.VehicleItem{
-			models.NewCar("Volkswagen", "Golf", 2020, 5),
-			models.NewCar("Toyota", "Corolla", 2022, 4),
-			models.NewMotorcycle("Honda", "CB500F", 2021, false),
+			models.NewCar("Chevrolet", "Corvette C7", 2018, 2),
+			models.NewCar("RAM", "1500", 2025, 4),
+			models.NewMotorcycle("Yamaha", "FJR1300", 2005, false),
+			models.NewCar("XPeng", "P7+", 2027, 5),
 		},
 	}
 }
@@ -45,7 +46,7 @@ func NewVehiclesHandler() *VehiclesHandler {
 //	@Tags			vehicles
 //	@Produce		json
 //	@Param			type	query		string	false	"Vehicle type"	Enums(car, motorcycle)
-//	@Param			brand	query		string	false	"Brand contains this text, case-insensitive (vo matches Volkswagen and Volvo)"
+//	@Param			brand	query		string	false	"Brand contains this text, case-insensitive (e matches Chevrolet and XPeng)"
 //	@Param			model	query		string	false	"Model contains this text, case-insensitive"
 //	@Param			year	query		int		false	"Exact production year"
 //	@Param			minYear	query		int		false	"Production year from (inclusive)"
@@ -75,7 +76,7 @@ func (h *VehiclesHandler) Get(w http.ResponseWriter, r *http.Request) {
 // Create handles POST /vehicles.
 //
 //	@Summary		Add a vehicle
-//	@Description	Adds a car or motorcycle. The server generates the id. Send doors only for a car (required, 1-10). hasSidecar is for a motorcycle (optional, default false); a car accepts only hasSidecar: false, which is ignored.
+//	@Description	Adds a car or motorcycle. The server generates the id. doors is optional and only for a car (1-10). hasSidecar is for a motorcycle (optional, default false); a car accepts only hasSidecar: false, which is ignored.
 //	@Tags			vehicles
 //	@Accept			json
 //	@Produce		json
