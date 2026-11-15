@@ -1,5 +1,37 @@
 basePath: /
 definitions:
+  handlers.CreateVehicleRequest:
+    properties:
+      brand:
+        example: Skoda
+        type: string
+      doors:
+        description: required when type is car
+        example: 5
+        type: integer
+      hasSidecar:
+        description: optional when type is motorcycle, default false
+        example: false
+        type: boolean
+      model:
+        example: Octavia
+        type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/models.VehicleType'
+        enum:
+        - car
+        - motorcycle
+        example: car
+      year:
+        example: 2023
+        type: integer
+    required:
+    - brand
+    - model
+    - type
+    - year
+    type: object
   handlers.VehicleDoc:
     properties:
       brand:
@@ -91,6 +123,37 @@ paths:
           schema:
             type: string
       summary: List vehicles
+      tags:
+      - vehicles
+    post:
+      consumes:
+      - application/json
+      description: Adds a car or motorcycle. The server generates the id. Send doors
+        only for a car (required, 1-10) and hasSidecar only for a motorcycle (optional,
+        default false).
+      parameters:
+      - description: Vehicle to add
+        in: body
+        name: vehicle
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateVehicleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.VehicleDoc'
+        "400":
+          description: Invalid JSON or validation error
+          schema:
+            type: string
+        "413":
+          description: Request body larger than 1 MB
+          schema:
+            type: string
+      summary: Add a vehicle
       tags:
       - vehicles
 schemes:

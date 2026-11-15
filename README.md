@@ -88,8 +88,37 @@ curl -k https://localhost:5001/vehicles
 
 The `-k` flag tells curl to accept the self-signed certificate.
 
-The vehicle data is in memory, and vehicle ids (GUIDs) are generated again
-each time the server starts.
+### `POST /vehicles`
+
+Adds a car or motorcycle and returns it with status `201`. The server
+generates the id.
+
+| Field        | Type    | Rules                                                  |
+|--------------|---------|--------------------------------------------------------|
+| `type`       | string  | Required: `car` or `motorcycle`                        |
+| `brand`      | string  | Required, not empty                                    |
+| `model`      | string  | Required, not empty                                    |
+| `year`       | integer | Required, from 1886 to next year                       |
+| `doors`      | integer | Car only: required, 1 to 10                            |
+| `hasSidecar` | boolean | Motorcycle only: optional, default `false`             |
+
+Unknown fields, a field for the wrong vehicle type, or a value that breaks a
+rule return `400`. A body larger than 1 MB returns `413`.
+
+Examples:
+
+```sh
+curl -X POST http://localhost:5000/vehicles \
+  -H "Content-Type: application/json" \
+  -d '{"type":"car","brand":"Skoda","model":"Octavia","year":2023,"doors":5}'
+
+curl -X POST http://localhost:5000/vehicles \
+  -H "Content-Type: application/json" \
+  -d '{"type":"motorcycle","brand":"Ural","model":"Gear Up","year":2022,"hasSidecar":true}'
+```
+
+The vehicle data is in memory only. Added vehicles are lost and default
+vehicle ids (GUIDs) are generated again each time the server restarts.
 
 ### API docs
 
@@ -125,7 +154,8 @@ other annotation comments on the handlers. Do not edit `docs/` by hand.
 ├── main.go                    Entry point: ports, certificate paths, API info
 ├── server/server.go           Server setup, route registration, HTTP/HTTPS listeners
 ├── handlers/
-│   ├── vehicles.go            GET /vehicles handler and default data
+│   ├── vehicles.go            GET and POST /vehicles handlers and default data
+│   ├── vehicle_request.go     POST /vehicles request body and validation
 │   ├── vehicle_filter.go      Query filter parsing and matching
 │   └── docs.go                Scalar UI and OpenAPI spec handlers
 ├── models/

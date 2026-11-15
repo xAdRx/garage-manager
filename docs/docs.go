@@ -84,10 +84,99 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "Adds a car or motorcycle. The server generates the id. Send doors only for a car (required, 1-10) and hasSidecar only for a motorcycle (optional, default false).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vehicles"
+                ],
+                "summary": "Add a vehicle",
+                "parameters": [
+                    {
+                        "description": "Vehicle to add",
+                        "name": "vehicle",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CreateVehicleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.VehicleDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid JSON or validation error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "413": {
+                        "description": "Request body larger than 1 MB",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         }
     },
     "definitions": {
+        "handlers.CreateVehicleRequest": {
+            "type": "object",
+            "required": [
+                "brand",
+                "model",
+                "type",
+                "year"
+            ],
+            "properties": {
+                "brand": {
+                    "type": "string",
+                    "example": "Skoda"
+                },
+                "doors": {
+                    "description": "required when type is car",
+                    "type": "integer",
+                    "example": 5
+                },
+                "hasSidecar": {
+                    "description": "optional when type is motorcycle, default false",
+                    "type": "boolean",
+                    "example": false
+                },
+                "model": {
+                    "type": "string",
+                    "example": "Octavia"
+                },
+                "type": {
+                    "enum": [
+                        "car",
+                        "motorcycle"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.VehicleType"
+                        }
+                    ],
+                    "example": "car"
+                },
+                "year": {
+                    "type": "integer",
+                    "example": 2023
+                }
+            }
+        },
         "handlers.VehicleDoc": {
             "type": "object",
             "properties": {
