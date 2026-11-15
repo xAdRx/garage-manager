@@ -30,8 +30,12 @@ func New(httpAddr, httpsAddr, certFile, keyFile string) *Server {
 }
 
 func (s *Server) routes() {
-	example := handlers.NewExampleHandler()
-	s.mux.HandleFunc("GET /example", example.Get)
+	cars := handlers.NewCarsHandler()
+	s.mux.HandleFunc("GET /cars", cars.Get)
+
+	docs := handlers.NewDocsHandler()
+	s.mux.HandleFunc("GET /docs", docs.UI)
+	s.mux.HandleFunc("GET /docs/openapi.json", docs.Spec)
 }
 
 // Start runs the HTTP and HTTPS listeners. It blocks until one of them fails.

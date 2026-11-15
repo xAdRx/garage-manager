@@ -1,0 +1,29 @@
+basePath: /
+definitions:
+  handlers.CarsResponse:
+    properties:
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Basic Go REST API.
+  title: REST API
+  version: "1.0"
+paths:
+  /cars:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CarsResponse'
+      summary: Get cars
+      tags:
+      - cars
+schemes:
+- http
+- https
+swagger: "2.0"
