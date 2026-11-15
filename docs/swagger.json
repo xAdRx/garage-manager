@@ -35,13 +35,13 @@
                     },
                     {
                         "type": "string",
-                        "description": "Brand, case-insensitive exact match",
+                        "description": "Brand contains this text, case-insensitive (vo matches Volkswagen and Volvo)",
                         "name": "brand",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Model, case-insensitive exact match",
+                        "description": "Model contains this text, case-insensitive",
                         "name": "model",
                         "in": "query"
                     },
@@ -83,7 +83,7 @@
                 }
             },
             "post": {
-                "description": "Adds a car or motorcycle. The server generates the id. Send doors only for a car (required, 1-10) and hasSidecar only for a motorcycle (optional, default false).",
+                "description": "Adds a car or motorcycle. The server generates the id. Send doors only for a car (required, 1-10). hasSidecar is for a motorcycle (optional, default false); a car accepts only hasSidecar: false, which is ignored.",
                 "consumes": [
                     "application/json"
                 ],
@@ -148,7 +148,7 @@
                     "example": 5
                 },
                 "hasSidecar": {
-                    "description": "optional when type is motorcycle, default false",
+                    "description": "optional when type is motorcycle, default false; a car accepts only false",
                     "type": "boolean",
                     "example": false
                 },

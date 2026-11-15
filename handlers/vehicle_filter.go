@@ -25,8 +25,8 @@ type vehicleFilter struct {
 func parseVehicleFilter(q url.Values) (vehicleFilter, error) {
 	f := vehicleFilter{
 		vehicleType: models.VehicleType(strings.ToLower(q.Get("type"))),
-		brand:       q.Get("brand"),
-		model:       q.Get("model"),
+		brand:       strings.ToLower(strings.TrimSpace(q.Get("brand"))),
+		model:       strings.ToLower(strings.TrimSpace(q.Get("model"))),
 	}
 
 	if f.vehicleType != "" && !f.vehicleType.Valid() {
@@ -60,14 +60,15 @@ func parseIntParam(q url.Values, name string) (int, error) {
 }
 
 // matches reports whether v passes every set filter.
-// Brand and model match case-insensitively on the full value.
+// Brand and model match when they contain the filter text, case-insensitively
+// (parseVehicleFilter stores both filters in lower case).
 func (f vehicleFilter) matches(v models.Vehicle) bool {
 	switch {
 	case f.vehicleType != "" && v.Type != f.vehicleType:
 		return false
-	case f.brand != "" && !strings.EqualFold(v.Brand, f.brand):
+	case f.brand != "" && !strings.Contains(strings.ToLower(v.Brand), f.brand):
 		return false
-	case f.model != "" && !strings.EqualFold(v.Model, f.model):
+	case f.model != "" && !strings.Contains(strings.ToLower(v.Model), f.model):
 		return false
 	case f.year != 0 && v.Year != f.year:
 		return false

@@ -70,11 +70,13 @@ Returns all vehicles. Every filter is optional, and filters combine with AND.
 | Query parameter | Description                                |
 |-----------------|--------------------------------------------|
 | `type`          | `car` or `motorcycle` (case-insensitive)   |
-| `brand`         | Exact brand, case-insensitive              |
-| `model`         | Exact model, case-insensitive              |
+| `brand`         | Brand contains this text, case-insensitive |
+| `model`         | Model contains this text, case-insensitive |
 | `year`          | Exact production year                      |
 | `minYear`       | Production year from (inclusive)           |
 | `maxYear`       | Production year to (inclusive)             |
+
+For example, `brand=vo` matches both Volkswagen and Volvo.
 
 An empty result returns `200` with `[]`. An invalid filter value returns `400`.
 
@@ -100,9 +102,10 @@ generates the id.
 | `model`      | string  | Required, not empty                                    |
 | `year`       | integer | Required, from 1886 to next year                       |
 | `doors`      | integer | Car only: required, 1 to 10                            |
-| `hasSidecar` | boolean | Motorcycle only: optional, default `false`             |
+| `hasSidecar` | boolean | Motorcycle: optional, default `false`. Car: only `false`, ignored |
 
-Unknown fields, a field for the wrong vehicle type, or a value that breaks a
+Unknown fields, `doors` on a motorcycle, `hasSidecar: true` on a car, or a
+value that breaks a
 rule return `400`. A body larger than 1 MB returns `413`.
 
 Examples:

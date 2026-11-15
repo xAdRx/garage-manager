@@ -45,8 +45,8 @@ func NewVehiclesHandler() *VehiclesHandler {
 //	@Tags			vehicles
 //	@Produce		json
 //	@Param			type	query		string	false	"Vehicle type"	Enums(car, motorcycle)
-//	@Param			brand	query		string	false	"Brand, case-insensitive exact match"
-//	@Param			model	query		string	false	"Model, case-insensitive exact match"
+//	@Param			brand	query		string	false	"Brand contains this text, case-insensitive (vo matches Volkswagen and Volvo)"
+//	@Param			model	query		string	false	"Model contains this text, case-insensitive"
 //	@Param			year	query		int		false	"Exact production year"
 //	@Param			minYear	query		int		false	"Production year from (inclusive)"
 //	@Param			maxYear	query		int		false	"Production year to (inclusive)"
@@ -75,7 +75,7 @@ func (h *VehiclesHandler) Get(w http.ResponseWriter, r *http.Request) {
 // Create handles POST /vehicles.
 //
 //	@Summary		Add a vehicle
-//	@Description	Adds a car or motorcycle. The server generates the id. Send doors only for a car (required, 1-10) and hasSidecar only for a motorcycle (optional, default false).
+//	@Description	Adds a car or motorcycle. The server generates the id. Send doors only for a car (required, 1-10). hasSidecar is for a motorcycle (optional, default false); a car accepts only hasSidecar: false, which is ignored.
 //	@Tags			vehicles
 //	@Accept			json
 //	@Produce		json

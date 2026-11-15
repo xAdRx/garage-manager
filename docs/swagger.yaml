@@ -10,7 +10,8 @@ definitions:
         example: 5
         type: integer
       hasSidecar:
-        description: optional when type is motorcycle, default false
+        description: optional when type is motorcycle, default false; a car accepts
+          only false
         example: false
         type: boolean
       model:
@@ -89,11 +90,12 @@ paths:
         in: query
         name: type
         type: string
-      - description: Brand, case-insensitive exact match
+      - description: Brand contains this text, case-insensitive (vo matches Volkswagen
+          and Volvo)
         in: query
         name: brand
         type: string
-      - description: Model, case-insensitive exact match
+      - description: Model contains this text, case-insensitive
         in: query
         name: model
         type: string
@@ -128,9 +130,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Adds a car or motorcycle. The server generates the id. Send doors
-        only for a car (required, 1-10) and hasSidecar only for a motorcycle (optional,
-        default false).
+      description: 'Adds a car or motorcycle. The server generates the id. Send doors
+        only for a car (required, 1-10). hasSidecar is for a motorcycle (optional,
+        default false); a car accepts only hasSidecar: false, which is ignored.'
       parameters:
       - description: Vehicle to add
         in: body

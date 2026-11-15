@@ -13,14 +13,15 @@ import (
 const firstCarYear = 1886
 
 // CreateVehicleRequest is the JSON body for POST /vehicles.
-// The server generates the id. Set doors only for a car, and hasSidecar only for a motorcycle.
+// The server generates the id. Set doors only for a car. hasSidecar is for a motorcycle;
+// a car accepts only hasSidecar: false, which is ignored.
 type CreateVehicleRequest struct {
 	Type       models.VehicleType `json:"type" enums:"car,motorcycle" example:"car" validate:"required"`
 	Brand      string             `json:"brand" example:"Skoda" validate:"required"`
 	Model      string             `json:"model" example:"Octavia" validate:"required"`
 	Year       int                `json:"year" example:"2023" validate:"required"`
 	Doors      *int               `json:"doors,omitempty" example:"5"`          // required when type is car
-	HasSidecar *bool              `json:"hasSidecar,omitempty" example:"false"` // optional when type is motorcycle, default false
+	HasSidecar *bool              `json:"hasSidecar,omitempty" example:"false"` // optional when type is motorcycle, default false; a car accepts only false
 }
 
 // toVehicle validates the request and builds a new Car or Motorcycle with a new GUID.
@@ -44,8 +45,9 @@ func (req CreateVehicleRequest) toVehicle() (models.VehicleItem, error) {
 
 	switch req.Type {
 	case models.TypeCar:
-		if req.HasSidecar != nil {
-			return nil, errors.New("hasSidecar is only allowed for a motorcycle")
+		// hasSidecar: false says nothing about a car, so it is accepted and ignored.
+		if req.HasSidecar != nil && *req.HasSidecar {
+			return nil, errors.New("hasSidecar: true is only allowed for a motorcycle")
 		}
 		if req.Doors == nil {
 			return nil, errors.New("doors is required for a car")
