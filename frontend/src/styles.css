@@ -1,0 +1,790 @@
+/* ==========================================================================
+   Garage Manager — industrial garage theme
+   ========================================================================== */
+
+:root {
+  /* Surfaces: concrete, from floor to raised panels */
+  --floor: #17181a;
+  --floor-line: rgba(255, 255, 255, 0.025);
+  --surface: #222427;
+  --surface-raised: #2b2e32;
+  --surface-sunken: #1b1c1f;
+  --border: #3a3d42;
+  --border-strong: #4c5056;
+
+  /* Text */
+  --text: #ecebe6;
+  --text-muted: #a3a49f;
+  --text-faint: #75777a;
+
+  /* Accents: hazard yellow paint, plus status colors */
+  --paint: #f2b705;
+  --paint-dim: rgba(242, 183, 5, 0.55);
+  --paint-ink: #1a1500;
+  --car: #8fb7d6;
+  --moto: #e0905a;
+  --danger: #ff6b5e;
+  --danger-bg: rgba(255, 107, 94, 0.08);
+  --success: #7fd18b;
+  --success-bg: rgba(127, 209, 139, 0.08);
+
+  --radius: 6px;
+  --gutter: 16px;
+  --max-width: 1200px;
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Bahnschrift', 'DIN Alternate', 'Roboto Condensed', 'Arial Narrow', var(--font-sans);
+  --font-mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--floor);
+  /* Concrete slab joints */
+  background-image:
+    linear-gradient(var(--floor-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--floor-line) 1px, transparent 1px);
+  background-size: 160px 160px;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--paint);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Header: a garage door with a hazard stripe along its bottom edge
+   -------------------------------------------------------------------------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #2a2c30;
+  /* Roller-door slats */
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.035) 0 2px,
+    transparent 2px 9px,
+    rgba(0, 0, 0, 0.25) 9px 10px
+  );
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+.site-header__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 14px var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.hazard-stripe {
+  height: 8px;
+  background: repeating-linear-gradient(-45deg, var(--paint) 0 14px, #141414 14px 28px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.brand__icon {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  color: var(--paint);
+}
+
+.brand__door {
+  fill: var(--floor);
+}
+
+.brand__slats {
+  fill: #8a8c90;
+}
+
+.brand__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.brand__name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.brand__tagline {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --------------------------------------------------------------------------
+   Buttons
+   -------------------------------------------------------------------------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font: inherit;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.button--primary {
+  background: var(--paint);
+  color: var(--paint-ink);
+}
+
+.button--primary:hover:not(:disabled) {
+  background: #ffc51f;
+}
+
+.button--ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.button--ghost:hover:not(:disabled) {
+  border-color: var(--paint);
+  color: var(--paint);
+}
+
+.button__icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   Page layout
+   -------------------------------------------------------------------------- */
+
+.page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 28px var(--gutter) 64px;
+}
+
+.page-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-bottom: 18px;
+}
+
+.page-title h1 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.page-title__count {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Form controls (shared by filters and owner form)
+   -------------------------------------------------------------------------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.field__label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0;
+}
+
+.field__required {
+  color: var(--paint);
+}
+
+.field__optional {
+  margin-left: 4px;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-faint);
+}
+
+.field__error {
+  font-size: 13px;
+  color: var(--danger);
+}
+
+.input {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color 120ms ease;
+}
+
+.input::placeholder {
+  color: var(--text-faint);
+}
+
+.input:hover {
+  border-color: var(--border-strong);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--paint);
+  box-shadow: 0 0 0 3px rgba(242, 183, 5, 0.18);
+}
+
+.input--invalid {
+  border-color: var(--danger);
+}
+
+/* Hide number spinners: years are typed, not clicked */
+.input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.input[type='number']::-webkit-inner-spin-button,
+.input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.segmented {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 3px;
+  gap: 3px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.segmented__option {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text-muted);
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.segmented__option:hover {
+  color: var(--text);
+}
+
+.segmented__option[aria-checked='true'] {
+  background: var(--paint);
+  color: var(--paint-ink);
+  font-weight: 600;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--paint);
+}
+
+/* --------------------------------------------------------------------------
+   Filter bar: a control panel above the garage floor
+   -------------------------------------------------------------------------- */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 20px;
+  padding: 16px;
+  margin-bottom: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--paint);
+  border-radius: var(--radius);
+}
+
+.filters__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filters .field {
+  flex: 1 1 160px;
+}
+
+.filters .field--range {
+  flex: 0 1 220px;
+}
+
+.filters__reset {
+  margin-left: auto;
+}
+
+.range {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.range__dash {
+  color: var(--text-faint);
+}
+
+/* --------------------------------------------------------------------------
+   Garage floor: vehicles parked in painted bays
+   -------------------------------------------------------------------------- */
+
+.bays {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  transition: opacity 150ms ease;
+}
+
+.bays--stale {
+  opacity: 0.55;
+}
+
+.bay {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  padding: 14px 18px 12px;
+  background: linear-gradient(180deg, var(--surface-raised), var(--surface) 70%);
+  border-radius: var(--radius);
+  /* Painted bay lines on both sides, open at the front */
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--paint-dim);
+  border-right: 4px solid var(--paint-dim);
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease;
+}
+
+.bay:hover {
+  transform: translateY(-2px);
+  border-left-color: var(--paint);
+  border-right-color: var(--paint);
+}
+
+.bay__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.bay__number {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paint);
+}
+
+.bay__type {
+  padding: 2px 8px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bay--car .bay__type {
+  color: var(--car);
+}
+
+.bay--motorcycle .bay__type {
+  color: var(--moto);
+}
+
+.bay__floor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 14px -6px 12px;
+  padding: 14px 8px 8px;
+  /* Wheel stop painted on the floor */
+  background: linear-gradient(transparent calc(100% - 4px), rgba(242, 183, 5, 0.35) calc(100% - 4px));
+  background-size: 60% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.vehicle-icon {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  color: #c9cbc6;
+}
+
+.bay--car .vehicle-icon {
+  color: var(--car);
+}
+
+.bay--motorcycle .vehicle-icon {
+  color: var(--moto);
+}
+
+.vehicle-icon__tyre {
+  fill: #101113;
+  stroke: currentColor;
+  stroke-width: 3;
+}
+
+.vehicle-icon__glass {
+  fill: var(--surface);
+  opacity: 0.85;
+}
+
+.vehicle-icon__light {
+  fill: var(--paint);
+}
+
+.vehicle-icon__sidecar {
+  opacity: 0.45;
+}
+
+.bay__info {
+  flex: 1;
+}
+
+.bay__brand {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.bay__model {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.bay__specs {
+  display: flex;
+  gap: 24px;
+  margin: 12px 0 0;
+}
+
+.bay__specs dt {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.bay__specs dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 15px;
+}
+
+.bay__id {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.bay--skeleton {
+  border-color: var(--border);
+  background: linear-gradient(100deg, var(--surface) 30%, var(--surface-raised) 50%, var(--surface) 70%);
+  background-size: 300% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.bay--skeleton:hover {
+  transform: none;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Notices: empty, error, success
+   -------------------------------------------------------------------------- */
+
+.notice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+}
+
+.notice__title {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.notice__hint {
+  font-size: 13px;
+}
+
+.notice__link {
+  color: var(--paint);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.notice__link:hover {
+  text-decoration: underline;
+}
+
+.notice--error {
+  border: 1px solid var(--danger);
+  background: var(--danger-bg);
+}
+
+.notice--error .notice__title {
+  color: var(--danger);
+}
+
+.notice--success {
+  border: 1px solid var(--success);
+  background: var(--success-bg);
+}
+
+/* --------------------------------------------------------------------------
+   Owner panel
+   -------------------------------------------------------------------------- */
+
+.panel {
+  max-width: 720px;
+  padding: 0 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 -20px 20px;
+  padding: 14px 20px;
+  background: var(--surface-raised);
+  border-bottom: 1px solid var(--border);
+}
+
+.panel__header h2 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.panel__tag {
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--paint-ink);
+  background: repeating-linear-gradient(-45deg, var(--paint) 0 8px, #e0a800 8px 16px);
+  border-radius: 3px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form__row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 20px;
+}
+
+.form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   Small screens
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 600px) {
+  .brand__tagline {
+    display: none;
+  }
+
+  .brand__name {
+    font-size: 16px;
+  }
+
+  .site-header .button {
+    padding: 0 12px;
+  }
+
+  .filters .field,
+  .filters .field--range,
+  .filters__group {
+    flex: 1 1 100%;
+  }
+
+  .filters .segmented {
+    display: flex;
+    align-self: stretch;
+  }
+
+  .segmented__option {
+    flex: 1;
+  }
+
+  .filters__reset {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .form__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel {
+    padding: 0 16px 20px;
+  }
+
+  .panel__header {
+    margin: 0 -16px 16px;
+    padding: 12px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
