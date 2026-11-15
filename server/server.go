@@ -30,8 +30,8 @@ func New(httpAddr, httpsAddr, certFile, keyFile string) *Server {
 }
 
 func (s *Server) routes() {
-	cars := handlers.NewCarsHandler()
-	s.mux.HandleFunc("GET /cars", cars.Get)
+	vehicles := handlers.NewVehiclesHandler()
+	s.mux.HandleFunc("GET /vehicles", vehicles.Get)
 
 	docs := handlers.NewDocsHandler()
 	s.mux.HandleFunc("GET /docs", docs.UI)

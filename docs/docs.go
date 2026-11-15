@@ -15,23 +15,72 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/cars": {
+        "/vehicles": {
             "get": {
+                "description": "Returns all vehicles. Every filter is optional; filters combine with AND.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "cars"
+                    "vehicles"
                 ],
-                "summary": "Get cars",
+                "summary": "List vehicles",
+                "parameters": [
+                    {
+                        "enum": [
+                            "car",
+                            "motorcycle"
+                        ],
+                        "type": "string",
+                        "description": "Vehicle type",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Brand, case-insensitive exact match",
+                        "name": "brand",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Model, case-insensitive exact match",
+                        "name": "model",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Exact production year",
+                        "name": "year",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Production year from (inclusive)",
+                        "name": "minYear",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Production year to (inclusive)",
+                        "name": "maxYear",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Car"
+                                "$ref": "#/definitions/handlers.VehicleDoc"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid filter value",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -39,7 +88,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Car": {
+        "handlers.VehicleDoc": {
             "type": "object",
             "properties": {
                 "brand": {
@@ -47,8 +96,14 @@ const docTemplate = `{
                     "example": "Volkswagen"
                 },
                 "doors": {
+                    "description": "only when type is car",
                     "type": "integer",
                     "example": 5
+                },
+                "hasSidecar": {
+                    "description": "only when type is motorcycle",
+                    "type": "boolean",
+                    "example": false
                 },
                 "id": {
                     "type": "string",
@@ -59,11 +114,34 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Golf"
                 },
+                "type": {
+                    "enum": [
+                        "car",
+                        "motorcycle"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.VehicleType"
+                        }
+                    ],
+                    "example": "car"
+                },
                 "year": {
                     "type": "integer",
                     "example": 2020
                 }
             }
+        },
+        "models.VehicleType": {
+            "type": "string",
+            "enum": [
+                "car",
+                "motorcycle"
+            ],
+            "x-enum-varnames": [
+                "TypeCar",
+                "TypeMotorcycle"
+            ]
         }
     }
 }`

@@ -9,7 +9,7 @@ type Car struct {
 // NewCar creates a Car with a new GUID.
 func NewCar(brand, model string, year, doors int) Car {
 	return Car{
-		Vehicle: NewVehicle(brand, model, year),
+		Vehicle: NewVehicle(TypeCar, brand, model, year),
 		Doors:   doors,
 	}
 }

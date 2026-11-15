@@ -1,13 +1,18 @@
 basePath: /
 definitions:
-  models.Car:
+  handlers.VehicleDoc:
     properties:
       brand:
         example: Volkswagen
         type: string
       doors:
+        description: only when type is car
         example: 5
         type: integer
+      hasSidecar:
+        description: only when type is motorcycle
+        example: false
+        type: boolean
       id:
         example: 3f2b8c1e-9d4a-4e6b-8a7f-1c2d3e4f5a6b
         format: uuid
@@ -15,18 +20,63 @@ definitions:
       model:
         example: Golf
         type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/models.VehicleType'
+        enum:
+        - car
+        - motorcycle
+        example: car
       year:
         example: 2020
         type: integer
     type: object
+  models.VehicleType:
+    enum:
+    - car
+    - motorcycle
+    type: string
+    x-enum-varnames:
+    - TypeCar
+    - TypeMotorcycle
 info:
   contact: {}
   description: Basic Go REST API.
   title: REST API
   version: "1.0"
 paths:
-  /cars:
+  /vehicles:
     get:
+      description: Returns all vehicles. Every filter is optional; filters combine
+        with AND.
+      parameters:
+      - description: Vehicle type
+        enum:
+        - car
+        - motorcycle
+        in: query
+        name: type
+        type: string
+      - description: Brand, case-insensitive exact match
+        in: query
+        name: brand
+        type: string
+      - description: Model, case-insensitive exact match
+        in: query
+        name: model
+        type: string
+      - description: Exact production year
+        in: query
+        name: year
+        type: integer
+      - description: Production year from (inclusive)
+        in: query
+        name: minYear
+        type: integer
+      - description: Production year to (inclusive)
+        in: query
+        name: maxYear
+        type: integer
       produces:
       - application/json
       responses:
@@ -34,11 +84,15 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Car'
+              $ref: '#/definitions/handlers.VehicleDoc'
             type: array
-      summary: Get cars
+        "400":
+          description: Invalid filter value
+          schema:
+            type: string
+      summary: List vehicles
       tags:
-      - cars
+      - vehicles
 schemes:
 - http
 - https
