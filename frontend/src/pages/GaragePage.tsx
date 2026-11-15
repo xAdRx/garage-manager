@@ -52,7 +52,7 @@ export default function GaragePage() {
         <div className="notice notice--error" role="alert">
           <p className="notice__title">Can&apos;t load vehicles</p>
           <p>{error}</p>
-          <p className="notice__hint">Check that the Go API is running on port 5000.</p>
+          <p className="notice__hint">Check that the Go API is running (locally: <code>go run .</code> on port 5000).</p>
           <button type="button" className="button button--ghost" onClick={() => setReloadKey((k) => k + 1)}>
             Try again
           </button>
