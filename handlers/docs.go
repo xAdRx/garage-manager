@@ -16,7 +16,7 @@ const scalarPage = `<!doctype html>
 </head>
 <body>
 	<script id="api-reference" data-url="/docs/openapi.json"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.25.0"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.76.4"></script>
 </body>
 </html>`
 
