@@ -3,10 +3,14 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/swaggo/swag"
+	"restapi/docs"
 )
 
 // scalarPage loads the Scalar API reference UI and points it at /docs/openapi.json.
+// The integrity hash makes the browser refuse the script if the CDN serves a changed
+// file. When you change the Scalar version, compute the new hash:
+//
+//	curl -sL <script URL> | openssl dgst -sha384 -binary | base64
 const scalarPage = `<!doctype html>
 <html>
 <head>
@@ -16,31 +20,20 @@ const scalarPage = `<!doctype html>
 </head>
 <body>
 	<script id="api-reference" data-url="/docs/openapi.json"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.76.4"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.76.4/dist/browser/standalone.min.js"
+		integrity="sha384-28+p9NyLFAl2b71X2XembwoB3f1K1iY0PyATQvkWJJ9k8E3sFW8FeGMbguBzasxv"
+		crossorigin="anonymous"></script>
 </body>
 </html>`
 
-// DocsHandler serves the generated OpenAPI spec and the Scalar UI.
-type DocsHandler struct{}
-
-// NewDocsHandler creates a DocsHandler.
-func NewDocsHandler() *DocsHandler {
-	return &DocsHandler{}
-}
-
-// UI handles GET /docs.
-func (h *DocsHandler) UI(w http.ResponseWriter, r *http.Request) {
+// DocsUI handles GET /docs.
+func DocsUI(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Write([]byte(scalarPage))
 }
 
-// Spec handles GET /docs/openapi.json.
-func (h *DocsHandler) Spec(w http.ResponseWriter, r *http.Request) {
-	doc, err := swag.ReadDoc()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+// DocsSpec handles GET /docs/openapi.json.
+func DocsSpec(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(doc))
+	w.Write(docs.Spec)
 }

@@ -46,9 +46,8 @@ func (s *Server) routes() {
 	api.HandleFunc("GET /vehicles", vehicles.Get)
 	api.HandleFunc("POST /vehicles", vehicles.Create)
 
-	docs := handlers.NewDocsHandler()
-	api.HandleFunc("GET /docs", docs.UI)
-	api.HandleFunc("GET /docs/openapi.json", docs.Spec)
+	api.HandleFunc("GET /docs", handlers.DocsUI)
+	api.HandleFunc("GET /docs/openapi.json", handlers.DocsSpec)
 
 	// The API stays at the root paths (/vehicles, /docs) as before.
 	s.mux.Handle("/vehicles", api)

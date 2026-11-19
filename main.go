@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 
-	_ "restapi/docs"
 	"restapi/server"
 )
 
@@ -13,7 +12,7 @@ const (
 	keyFile  = "certs/key.pem"
 )
 
-//go:generate swag init
+//go:generate swag init --outputTypes json,yaml
 
 // @title			REST API
 // @version		1.0
