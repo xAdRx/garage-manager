@@ -24,7 +24,7 @@ type vehicleFilter struct {
 // It returns an error for an unknown type or a non-numeric year value.
 func parseVehicleFilter(q url.Values) (vehicleFilter, error) {
 	f := vehicleFilter{
-		vehicleType: models.VehicleType(strings.ToLower(q.Get("type"))),
+		vehicleType: models.VehicleType(strings.ToLower(strings.TrimSpace(q.Get("type")))),
 		brand:       strings.ToLower(strings.TrimSpace(q.Get("brand"))),
 		model:       strings.ToLower(strings.TrimSpace(q.Get("model"))),
 	}

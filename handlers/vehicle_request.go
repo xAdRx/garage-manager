@@ -26,7 +26,7 @@ type CreateVehicleRequest struct {
 
 // toVehicle validates the request and builds a new Car or Motorcycle with a new GUID.
 func (req CreateVehicleRequest) toVehicle() (models.VehicleItem, error) {
-	req.Type = models.VehicleType(strings.ToLower(string(req.Type)))
+	req.Type = models.VehicleType(strings.ToLower(strings.TrimSpace(string(req.Type))))
 	req.Brand = strings.TrimSpace(req.Brand)
 	req.Model = strings.TrimSpace(req.Model)
 
