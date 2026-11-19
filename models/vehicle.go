@@ -36,11 +36,6 @@ func NewVehicle(vehicleType VehicleType, brand, model string, year int) Vehicle 
 	}
 }
 
-// Name returns the brand and model, e.g. "Volkswagen Golf".
-func (v Vehicle) Name() string {
-	return v.Brand + " " + v.Model
-}
-
 // Base returns the shared Vehicle fields. Car and Motorcycle get this method
 // through embedding, so both satisfy VehicleItem.
 func (v Vehicle) Base() Vehicle {
