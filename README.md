@@ -166,7 +166,7 @@ Returns all vehicles. Every filter is optional, and filters combine with AND.
 
 | Query parameter | Description                                |
 |-----------------|--------------------------------------------|
-| `type`          | `car` or `motorcycle` (case-insensitive)   |
+| `type`          | `car` or `motorcycle` (case-insensitive, spaces around it are ignored) |
 | `brand`         | Brand contains this text, case-insensitive |
 | `model`         | Model contains this text, case-insensitive |
 | `year`          | Exact production year                      |
@@ -229,12 +229,22 @@ Vehicle ids (GUIDs) are generated again each time the server restarts.
 - OpenAPI (Swagger 2.0) spec: <http://localhost:5000/docs/openapi.json>
 
 The Scalar UI loads its script from a CDN, so the docs page needs internet
-access.
+access. The page checks the script against a pinned `integrity` hash, so the
+browser refuses a changed file. When you change the Scalar version in
+`handlers/docs.go`, compute the new hash:
+
+```sh
+curl -sL https://cdn.jsdelivr.net/npm/@scalar/api-reference@<version>/dist/browser/standalone.min.js \
+  | openssl dgst -sha384 -binary | base64
+```
 
 ## Updating the API docs
 
-The spec in `docs/` is generated from the `@Summary`, `@Param`, `@Router` and
-other annotation comments on the handlers. Do not edit `docs/` by hand.
+The spec files `docs/swagger.json` and `docs/swagger.yaml` are generated from
+the `@Summary`, `@Param`, `@Router` and other annotation comments on the
+handlers. Do not edit them by hand. `docs/spec.go` builds `swagger.json` into
+the binary, so the API needs no swag library at runtime, only the swag CLI to
+generate the files.
 
 1. Install the swag CLI (once):
 
@@ -245,10 +255,12 @@ other annotation comments on the handlers. Do not edit `docs/` by hand.
 2. After changing any annotation, regenerate the spec:
 
    ```sh
-   swag init
+   swag init --outputTypes json,yaml
    ```
 
-   If `swag` is not on your `PATH`, run `~/go/bin/swag init` instead.
+   If `swag` is not on your `PATH`, run `~/go/bin/swag init --outputTypes json,yaml` instead.
+   Plain `swag init` also creates a `docs/docs.go` file that this project does
+   not use; delete it if it appears.
 
 ## Frontend
 
@@ -305,7 +317,9 @@ serves the `dist/` build itself and answers under `/api` (see
 │   ├── vehicle.go             Vehicle base struct, VehicleType, VehicleItem interface
 │   ├── car.go                 Car (embeds Vehicle)
 │   └── motorcycle.go          Motorcycle (embeds Vehicle)
-├── docs/                      Generated Swagger spec (do not edit)
+├── docs/
+│   ├── swagger.json, .yaml    Generated OpenAPI spec (do not edit)
+│   └── spec.go                Embeds swagger.json into the binary
 ├── certs/                     Local TLS certificate and key (git-ignored)
 ├── Dockerfile                 Builds one image with the API and the frontend
 ├── render.yaml                Render Blueprint for the free web service
